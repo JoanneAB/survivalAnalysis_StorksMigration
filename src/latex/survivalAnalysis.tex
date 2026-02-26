@@ -1,0 +1,161 @@
+% --------------------------------------------------------------------------------------------------
+\section{Survival analysis methods}
+
+% ..................................................................................................
+\subsection{Identification of significant covariates}
+Regarding the correlation matrix presented in figure \ref{fig_xcorr}, the \texttt{isWarm, temperature, 
+windSpeed} and \texttt{cloudHeight} seem to play an important role in the survival analysis. Cox and ANOVA 
+tests (see listing \ref{lst_cox} for extracts of the \texttt{R} code) are used to select the significant 
+covariates in order to preceed with analysis. The result of this ANOVA analysis using \texttt{isWarm, temperature, 
+windSpeed} and \texttt{cloudHeight} covariates show a p-value smaller than 0.05, which indicates that we rejext 
+the null hypotheses. The difference between the two models are significant and more covariates are necessary to 
+explain the data. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{figures/correlationMatrix.png}
+\caption{Correlation matrix of the covariates used in this study}
+\label{fig_xcorr}
+\end{figure}
+
+\begin{lstlisting}[language=R, caption={Cox and ANOVA analysis on a selection of covariates}, captionpos=b, label={lst_cox}]
+MtempWarmWindCloud <- coxph(Surv(start, stop, event)~temperature + isWarm + strata(season) + windSpeed + cloudHeight, data=data)
+
+Mall <- coxph(Surv(start, stop, event)~isWarm + temperature + windSpeed + pressure + humidity + visibility + nebulosity + cloudHeight + moonPhase + strata(season), data=data)
+
+anova(MtempWarmWindCloud, Mall)
+\end{lstlisting}
+
+Stepwise model selection is applied to the dataset using the AIC (Akaike Information Criterion) to select the 
+most informative covariates and find the simplest model that would best fit the data. Results of the R code are 
+presented in the listing \ref{lst_aic} and show that the highly significant covariates (with p-values $<0.01$) 
+are : \texttt{longitude, isWarm, temperature, humidity, visibility, windSpeed}, and \texttt{cloudHeight}. 
+\texttt{pressure} is a significant covariate (with p-value $<0.05$). \texttt{Nebulosity, latitude} and 
+\texttt{moonPhase} covariates show p-values greater than 0.05 and are not significant covariates. The model 
+considering only the highly significant model is named \texttt{Mbest}. ANOVA test is performed to compare 
+\texttt{Mbest} model and the model considering all the covariates. Results show a p-value much greater than 0.05 
+showing that we reject H1 hypothesis. Both models are significantly equals and the covariates of \texttt{Mbest} 
+are sufficient to explain the data.\\ 
+\newpage
+
+\begin{lstlisting}[language=R, caption={Extracts of the output of the R code of the stepwise variable selection.}, captionpos=b, label={lst_aic}]
+coxph(formula = Surv(start, stop, event) ~ latitude + longitude + 
+    isWarm + temperature + windSpeed + pressure + humidity + 
+    visibility + nebulosity + cloudHeight + moonPhase, data = data)
+
+  n= 641, number of events= 376 
+
+                coef exp(coef) se(coef)       z Pr(>|z|)    
+latitude     0.04566   1.04671  0.08351   0.547 0.584588    
+longitude    0.16842   1.18343  0.06528   2.580 0.009880 ** 
+isWarm      -2.07290   0.12582  0.23488  -8.825  < 2e-16 ***
+temperature -1.18656   0.30527  0.09937 -11.941  < 2e-16 ***
+windSpeed   -0.19953   0.81912  0.05703  -3.499 0.000467 ***
+pressure    -0.14994   0.86076  0.07606  -1.971 0.048687 *  
+humidity    -0.40031   0.67011  0.09945  -4.025 5.69e-05 ***
+visibility  -0.22837   0.79583  0.06243  -3.658 0.000254 ***
+nebulosity  -0.10825   0.89740  0.06749  -1.604 0.108716    
+cloudHeight  0.22859   1.25683  0.08634   2.648 0.008106 ** 
+moonPhase    0.04129   1.04216  0.05335   0.774 0.438883   
+\end{lstlisting}
+
+The estimated Hazard Ratios of each covariates are presented in figure \ref{fig_HR} for the highly statistically 
+significant covariates. \texttt{CloudHeight and longitude} covariate shows a harzard ratio greater than 1 
+(HR=1.24 and 1.17 respectively) which indicates that the hazard increases when the cloud height and longitude 
+increases. The thicker the cloud layer, the higher the risk.
+
+Covariate \texttt{isWarm} shows the strongest effects with a HR value or 0.11. Event with warm days before the 
+observation of a white stork have greatly reduced hazard.
+
+Relatively strong effect is associated to the covariate \texttt{temperature} with a HR value of 0.32. Higher 
+temperature is associated with considerable lower hazard.
+
+With a hazard ratio close the 1 for the \texttt{pressure, widSpeed, humidity} and \texttt{visibility} covariates, 
+these weather parameters seem to have moderate effect on the modelisation of the event (\textit{i.e.} the 
+observation of the white stork).
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{figures/hazardRatios.png}
+\caption{Hazard ratios plots of significant covariates}
+\label{fig_HR}
+\end{figure}
+
+
+% ..................................................................................................
+\subsection{Evaluation of time-dependent risks}
+Schoenfeld residuals test is performed to verify the proportional hazards (PH) assumption that requires that the 
+hazard ratios remain constant over time. A correlation of the scaled Schoenfeld residuals with time 
+(\textit{i.e.} a variation of $\beta$ over time for each covariate) suggests that the effect of the covariates 
+would change over time.
+
+Results of the Schoenfeld test for the \texttt{Mbest} model are presented in listing \ref{lst_zph} and figure 
+\ref{fig_zph} and show that the PH assumption is violated for all covariates but \texttt{visibility}. Indeed, 
+p-values of \texttt{longitude, latitude, pressure, humidity, temperature, windSpeed} and \texttt{isWarm} 
+covariates are highly statistically significant (p-value $<0.01$). \texttt{cloudHeight} covariate show a 
+statistically significant violation of the PH assumption (p-value $<0.05$). 
+
+
+\begin{lstlisting}[language=R, caption={Output of the R code for Schoenfeld test (\texttt{cox.zph(Mbest))}.}, captionpos=b, label={lst_zph}]
+             chisq  p-value
+longitude   18.55  1 1.7e-05 (< 0.01)
+latitude    24.64  1 6.9e-07 (< 0.01)
+pressure     9.55  1 0.00199 (< 0.01)
+temperature 13.98  1 0.00019 (< 0.01)
+isWarm       7.46  1 0.00629 (< 0.01)
+windSpeed    7.05  1 0.00793 (< 0.01)
+humidity    16.21  1 5.7e-05 (< 0.01)
+visibility   1.57  1 0.21018 (> 0.05)
+cloudHeight  5.49  1 0.01915 (< 0.05)
+\end{lstlisting}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{figures/cox_zph.png}
+\caption{Scaled Schoenfeld residuals over time for each covariate of the \texttt{Mbest} model.}
+\label{fig_zph}
+\end{figure}
+
+Figure \ref{fig_zph} shows a clear violation of the PH asusmption for \texttt{isWarm} covariate. Indeed, the 
+sharp and strong variation of Beta with time shows a clear time-dependancy of the covariate. Moreover, the 
+distribution of Beta(t) for \texttt{temperature} and \texttt{windSpeed} shows a slight upward slope while the  
+distrubution for \texttt{humidity} and \texttt{latitude} show a slight downward slope. Both indicating 
+time-dependancy of the covariates. 
+
+% ..................................................................................................
+\subsection{Residuals between observed and expected events}
+Results of the Schoenfeld test show that the hazard ratios are not constant over time and suggest time variation 
+of many covariates. Time-dependency are added to the cox function as presented in the listing \ref{lst_tt}. 
+Several functions have been tested and the \texttt{x/t} function presents better results which are presented 
+in this report. More details on this analysis are presented in the R code file. 
+
+\begin{lstlisting}[language=R, caption={Modelisation of time variations.}, captionpos=b, label={lst_tt}]
+Mbest_tt <- coxph(Surv(start, stop, event)~temperature + tt(temperature) + 
+      isWarm + tt(isWarm) +  windSpeed + tt(windSpeed) + humidity + tt(humidity) + 
+      visibility + cloudHeight + strata(season), data=data, tt=function(x,t,...) x/t)
+\end{lstlisting}
+
+Martingale residuals, showing the difference between the observed number of events and the expected number of 
+events for \texttt{Mbest} (left) and \texttt{Mbest\_tt} (right) models are presented in figure \ref{fig_residuals}.
+Figure \ref{fig_hist_residuals} presents their histograms and boxplot distributions. Martingale residuals are 
+partially taken into account in the "Time-varying best model". Indeed, the dispersion of the residuals decreases 
+and most of the residuals are closer to 0. The number of censored observations (over-predicted risk), with 
+residuals lower than -1, are better constraints by the time-varying model. However, the model still fails to 
+predict some measurements and did not fully captured the hazard variation. Indeed, many measurements residuals 
+remain close to 1 which indicates that these events have underestimated risks by the model. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.65]{figures/martingale.png}
+\caption{Martingale analysis on \texttt{Mbest} (left) and \texttt{Mbest\_tt} (right) models. Red lines show 
+a line smoothing of the scattered residuals data.}
+\label{fig_residuals}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{figures/hist_residuals_boxplot.png}
+\caption{Histograms of the Martingale residuals on \texttt{Mbest} (left) and \texttt{Mbest\_tt} (center) models. Left: boxplot representation of the residuals for both models.}
+\label{fig_hist_residuals}
+\end{figure}
+

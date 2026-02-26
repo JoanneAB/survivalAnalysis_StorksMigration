@@ -1,0 +1,212 @@
+[
+  {
+    "id": "68028001",
+    "nom": "BERGHEIM-INRAE",
+    "posteOuvert": true,
+    "typePoste": 3,
+    "lon": 7.345833,
+    "lat": 48.216333,
+    "alt": 309,
+    "postePublic": true
+  },
+  {
+    "id": "68062001",
+    "nom": "CARSPACH",
+    "posteOuvert": true,
+    "typePoste": 1,
+    "lon": 7.212833,
+    "lat": 47.632,
+    "alt": 332,
+    "postePublic": true
+  },
+  {
+    "id": "68066001",
+    "nom": "COLMAR-INRAE",
+    "posteOuvert": true,
+    "typePoste": 3,
+    "lon": 7.33,
+    "lat": 48.063333,
+    "alt": 202,
+    "postePublic": true
+  },
+  {
+    "id": "68102001",
+    "nom": "GEISHOUSE_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.056833,
+    "lat": 47.875333,
+    "alt": 618,
+    "postePublic": true
+  },
+  {
+    "id": "68112005",
+    "nom": "GUEBWILLER",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.225833,
+    "lat": 47.903667,
+    "alt": 273,
+    "postePublic": true
+  },
+  {
+    "id": "68165001",
+    "nom": "KIFFIS",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.355667,
+    "lat": 47.438,
+    "alt": 576,
+    "postePublic": true
+  },
+  {
+    "id": "68171002",
+    "nom": "KRUTH_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 6.955,
+    "lat": 47.944167,
+    "alt": 512,
+    "postePublic": true
+  },
+  {
+    "id": "68188002",
+    "nom": "LINTHAL_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.114,
+    "lat": 47.9415,
+    "alt": 488,
+    "postePublic": true
+  },
+  {
+    "id": "68190001",
+    "nom": "LUCELLE_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.268167,
+    "lat": 47.438333,
+    "alt": 690,
+    "postePublic": true
+  },
+  {
+    "id": "68205001",
+    "nom": "COLMAR-MEYENHEIM",
+    "posteOuvert": true,
+    "typePoste": 0,
+    "lon": 7.407667,
+    "lat": 47.928667,
+    "alt": 207,
+    "postePublic": true
+  },
+  {
+    "id": "68224006",
+    "nom": "MULHOUSE",
+    "posteOuvert": true,
+    "typePoste": 1,
+    "lon": 7.288833,
+    "lat": 47.75,
+    "alt": 245,
+    "postePublic": true
+  },
+  {
+    "id": "68226005",
+    "nom": "MUNSTER_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.117333,
+    "lat": 48.047167,
+    "alt": 420,
+    "postePublic": true
+  },
+  {
+    "id": "68231001",
+    "nom": "NEUF-BRISACH",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.574667,
+    "lat": 48.026167,
+    "alt": 195,
+    "postePublic": true
+  },
+  {
+    "id": "68247001",
+    "nom": "ODEREN - VALLEE",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 6.970333,
+    "lat": 47.909667,
+    "alt": 457,
+    "postePublic": true
+  },
+  {
+    "id": "68247003",
+    "nom": "MARKSTEIN CRETE",
+    "posteOuvert": true,
+    "typePoste": 1,
+    "lon": 7.031667,
+    "lat": 47.923,
+    "alt": 1184,
+    "postePublic": true
+  },
+  {
+    "id": "68249002",
+    "nom": "ORBEY LAC BLANC_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.103833,
+    "lat": 48.135833,
+    "alt": 1080,
+    "postePublic": true
+  },
+  {
+    "id": "68287001",
+    "nom": "ROUFFACH - CHS",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.291667,
+    "lat": 47.954,
+    "alt": 208,
+    "postePublic": true
+  },
+  {
+    "id": "68287003",
+    "nom": "ROUFFACH - SA",
+    "posteOuvert": false,
+    "typePoste": 2,
+    "lon": 7.286833,
+    "lat": 47.965333,
+    "alt": 285,
+    "postePublic": true
+  },
+  {
+    "id": "68297001",
+    "nom": "BALE-MULHOUSE",
+    "posteOuvert": true,
+    "typePoste": 0,
+    "lon": 7.51,
+    "lat": 47.614333,
+    "alt": 263,
+    "postePublic": true
+  },
+  {
+    "id": "68307001",
+    "nom": "SEWEN - LAC ALFELD_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 6.873833,
+    "lat": 47.8155,
+    "alt": 620,
+    "postePublic": true
+  },
+  {
+    "id": "68338001",
+    "nom": "TROIS-EPIS_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.231,
+    "lat": 48.1015,
+    "alt": 656,
+    "postePublic": true
+  }
+]

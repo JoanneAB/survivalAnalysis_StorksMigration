@@ -1,0 +1,212 @@
+[
+  {
+    "id": "67027001",
+    "nom": "BELMONT",
+    "posteOuvert": true,
+    "typePoste": 1,
+    "lon": 7.267167,
+    "lat": 48.406333,
+    "alt": 1065,
+    "postePublic": true
+  },
+  {
+    "id": "67029001",
+    "nom": "BERG",
+    "posteOuvert": true,
+    "typePoste": 1,
+    "lon": 7.151667,
+    "lat": 48.884333,
+    "alt": 350,
+    "postePublic": true
+  },
+  {
+    "id": "67067001",
+    "nom": "BRUMATH",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.709667,
+    "lat": 48.724667,
+    "alt": 139,
+    "postePublic": true
+  },
+  {
+    "id": "67083002",
+    "nom": "DAMBACH_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.661667,
+    "lat": 48.999333,
+    "alt": 234,
+    "postePublic": true
+  },
+  {
+    "id": "67115001",
+    "nom": "EBERSHEIM",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.4945,
+    "lat": 48.3085,
+    "alt": 164,
+    "postePublic": true
+  },
+  {
+    "id": "67122001",
+    "nom": "WANGENBOURG_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.307,
+    "lat": 48.6425,
+    "alt": 460,
+    "postePublic": true
+  },
+  {
+    "id": "67124001",
+    "nom": "STRASBOURG-ENTZHEIM",
+    "posteOuvert": true,
+    "typePoste": 0,
+    "lon": 7.640333,
+    "lat": 48.5495,
+    "alt": 150,
+    "postePublic": true
+  },
+  {
+    "id": "67126002",
+    "nom": "ERCKARTSWILLER_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.364167,
+    "lat": 48.873,
+    "alt": 245,
+    "postePublic": true
+  },
+  {
+    "id": "67165006",
+    "nom": "GRANDFONTAINE_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.148,
+    "lat": 48.507667,
+    "alt": 736,
+    "postePublic": true
+  },
+  {
+    "id": "67180001",
+    "nom": "HAGUENAU",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.801167,
+    "lat": 48.836333,
+    "alt": 153,
+    "postePublic": true
+  },
+  {
+    "id": "67186001",
+    "nom": "HEGENEY SA",
+    "posteOuvert": false,
+    "typePoste": 2,
+    "lon": 7.735833,
+    "lat": 48.888667,
+    "alt": 185,
+    "postePublic": true
+  },
+  {
+    "id": "67210002",
+    "nom": "LE HOHWALD_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.33,
+    "lat": 48.4015,
+    "alt": 591,
+    "postePublic": true
+  },
+  {
+    "id": "67261003",
+    "nom": "LAUTERBOURG SA",
+    "posteOuvert": false,
+    "typePoste": 2,
+    "lon": 8.166667,
+    "lat": 48.97,
+    "alt": 110,
+    "postePublic": true
+  },
+  {
+    "id": "67443001",
+    "nom": "SCHEIBENHARD",
+    "posteOuvert": true,
+    "typePoste": 1,
+    "lon": 8.1455,
+    "lat": 48.964167,
+    "alt": 144,
+    "postePublic": true
+  },
+  {
+    "id": "67462004",
+    "nom": "SELESTAT SA",
+    "posteOuvert": true,
+    "typePoste": 1,
+    "lon": 7.478333,
+    "lat": 48.272833,
+    "alt": 173,
+    "postePublic": true
+  },
+  {
+    "id": "67476002",
+    "nom": "STATTMATTEN SA",
+    "posteOuvert": false,
+    "typePoste": 2,
+    "lon": 8.002333,
+    "lat": 48.795167,
+    "alt": 121,
+    "postePublic": true
+  },
+  {
+    "id": "67482001",
+    "nom": "STRASBOURG - BOTANIQUE",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.768833,
+    "lat": 48.581833,
+    "alt": 139,
+    "postePublic": true
+  },
+  {
+    "id": "67498001",
+    "nom": "UHRWILLER_SAPC",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.5815,
+    "lat": 48.883667,
+    "alt": 217,
+    "postePublic": true
+  },
+  {
+    "id": "67507003",
+    "nom": "VILLE",
+    "posteOuvert": true,
+    "typePoste": 2,
+    "lon": 7.306167,
+    "lat": 48.343,
+    "alt": 264,
+    "postePublic": true
+  },
+  {
+    "id": "67516001",
+    "nom": "WALTENHEIM-SUR-ZORN",
+    "posteOuvert": true,
+    "typePoste": 1,
+    "lon": 7.61,
+    "lat": 48.7435,
+    "alt": 252,
+    "postePublic": true
+  },
+  {
+    "id": "67519001",
+    "nom": "LA WANTZENAU SA",
+    "posteOuvert": false,
+    "typePoste": 2,
+    "lon": 7.832333,
+    "lat": 48.634167,
+    "alt": 135,
+    "postePublic": true
+  }
+]

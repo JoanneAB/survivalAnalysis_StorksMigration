@@ -1,0 +1,119 @@
+% ---------------------------------------------------------------------------------------------------------------
+\section{Data collection and data processing}
+
+The aim of this study is to analyse the time until the first observation of the year of the first white stork in 
+Alsace region, France after their return from migration in Africa. To construct the dataset, the geographical 
+region of interest is divided into several sub-regions (figure \ref{fig_map}). Survival times are the number of 
+days, for each year in each sub-region, until the first stork has been observed. Additional data such as weather 
+parameters or moon phase are added to the dataset. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{figures/Figure_1.png}
+\caption{Map of Alsace, France region. Black squares represent the sub-regions in which the data for each first observations of the white storks are collected. Red crosses represent the meteorological stations.}
+\label{fig_map}
+\end{figure}
+
+% ---------------------------------------------------------------------------------------------------------------
+\subsection{Data collection}
+% ...............................................................................................................
+\subsubsection{Observations of the white stork}
+Dates and locations of the observations of white storks in France are collected from the Global Biodiversity 
+Information Facility (GBIF) website using the latin name: Ciconia ciconia (Linnaeus, 1758) \citep{gbif}. The GBIF 
+website compiles a total of 1990 distincts datasets. This collected dataset of white stork observations consists 
+of 1883 088 observations (latitude, longitude and date) from January 1960 to October 2025.
+
+% ...............................................................................................................
+\subsubsection{Weather data}
+Weather data in Alsace are collected from the "Observation m\'et\'eorologique historiques France" \citep{synop}. 
+Data are recorded every three hours from 1996 at two stations : Strasbourg and Mulhouse. Recorded data are 
+temperature, wind speed, pressure, humidity, horizonatal visibility, nebulosity and cloud height.
+
+% ...............................................................................................................
+\subsubsection{Lunar phases}
+The moon is known to be a compass and landmark for the birds migrations. The fraction of illuminated moon could 
+play an important role on the date of observation of the first stork in Alsace. Moon illumination fractions are 
+collected from the Astronomical Applications Department \citep{moon}.
+
+% ---------------------------------------------------------------------------------------------------------------
+\subsection{Covariates engineering}
+% ...............................................................................................................
+\subsubsection{Time-dependent covariate}
+Weather and more especially temperatures play an important role on the migratory return dates of the white 
+storks. Indeed, a period of several warm days would lead to an increase in potential stork's food (insects, small 
+mammals...) and an earlier return of the storks.
+
+For each entry of the dataset, a new covariate is introduced to the dataset: 'isWarm'. This boolean covariate 
+indicates whether four consecutive warm days (\textit{i.e.} with a morning temperature greater or equal to 
+8\textdegree C) did occur the same year, before the first observation of the stork in the sub-region 
+(\textit{i.e.} the event). Regarding the time-dependency of this covariate, if warm days have been recorded, the 
+entry of the dataset is split into two entries. Table \ref{table_isWarm} presents a subset of the dataset where 
+the entry with \texttt{id=1} do not show four consecutive warm days (\texttt{isWarm=0}) before the event at day 
+88. The entry with \texttt{id=2} is divided into two lines with a first line that represents the time to the 
+occurence of four consecutive warm days (at day 79, \texttt{isWarm=1}). The second line is the time between the 
+warm days and the event (observation of the first stork). 
+
+
+\begin{table}[H]
+\centering \begin{tabular}{cccccc}
+id & start & stop & event & isWarm & ...\\\hline\hline
+1  & 0     & 88   & 1     & 0      & ...\\
+2  & 0     & 79   & 0     & 1      & ...\\
+2  & 79    & 89   & 1     & 1      & ...\\
+\end{tabular}
+\caption{}
+\label{table_isWarm}
+\end{table}
+
+A new variable is added to the dataset to stratified by season (listing \ref{lst_season}), allowing the 
+survival function to vary freely across seasons (listing \ref{lst_season}).
+
+\begin{lstlisting}[language=R, caption={New stratified variable}, captionpos=b, label={lst_season}]
+data$season <- factor(quarters(as.Date(data$stop)))
+\end{lstlisting}
+
+% ...............................................................................................................
+\subsubsection{Covariate truncations}
+Truncations on covariates are done to reduce the range of possible values, avoid extrem values and reduce the 
+number of outliers.
+
+White storks typically fly at altitudes between 500 and 1500m. Although some observations report altitudes of up 
+to 4000m, these remain rare. The covariate \texttt{cloudHeight} was truncated to 3000 as the effect of higher 
+values might be very limited.  
+
+White storks experience difficulties in flying with winds stronger than 3-5 m/s. The covariate 
+\texttt{windSpeed} was therefore truncated at 5m/s.
+
+% ...............................................................................................................
+\subsubsection{Covariates pre-processing}
+Each non-boolean covariates (except \texttt{id}, \texttt{start}, \texttt{stop} and \texttt{event} covariates) 
+are standardized in order to have a zero-mean and a standard deviation equals to 1.
+
+Missing values, that corresponds to 276 values out of 10~605 total entries, are replaced by the mean of its 
+covariate (\textit{i.e.} 0). Missing values are mostly related to missing weather measurements.
+
+Figure \ref{fig_outliers} presents the distribution of \texttt{temperature/stop} ratio of covariates as a 
+function of \texttt{stop} and show some outliers with values greater than 0.1 and smaller than -0.2. These 
+entries are removed from the database. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{figures/remove_outliers.png}
+\caption{Distribution of \texttt{temperature/stop} as a function of \texttt{stop}. Horizontal dashed lines outline the presence of outliers.}
+\label{fig_outliers}
+\end{figure}
+
+% ---------------------------------------------------------------------------------------------------------------
+\subsection{The final dataset}
+A total of 641 observations were collected, each with 16 covariates : \texttt{start, stop, event, isWarm, 
+latitude, longitude, temperature, windSpeed, pressure, humidity, visibility, nebulosity, cloudHeight, moonPhase} 
+and \texttt{season}. The distribution of the standardized covariates are presented in figure \ref{fig_data}. 
+More informations and figures are available in the R markdown script.  
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{figures/boxplots.png}
+\caption{Distribution of the standardized covariates.}
+\label{fig_data}
+\end{figure}
+

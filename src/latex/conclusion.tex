@@ -1,0 +1,20 @@
+% ---------------------------------------------------------------------------------------------------------------
+\section{Conclusion}
+This study applied survival analysis to model the return dates of white storks (\textit{Ciconia ciconia}) to 
+Alsace, France, using observational data of white storks combined with historical weather and lunar phases 
+records.
+
+The analysis identified six statistically significant covariates: \texttt{isWarm, temperature, humidity, 
+visibility, windSpeed} and \texttt{cloudHeight}. Among these covariates, the occurrence of consecutive warm days 
+(\textit{i.e.} \texttt{isWarm} boolean covariate) and ambient temperature showed the strongest effects, with 
+hazard ratios well below 1, confirming that warmer early-season conditions are strongly associated with earlier 
+stork arrivals. In contrast, increased cloud height was associated with a delayed first observation.
+
+The proportional hazards assumption was found to be violated for most covariates, highlighting time-dependency 
+of the weather conditions to stork migration. Introducing time-varying coefficients transformation partially 
+addressed this issue, reducing residual dispersion and improving the fit. However, the model did not fully 
+capture the hazard variation, suggesting that more temporal formulations require further investigation.
+
+Overall, this work demonstrates that weather conditions are key factors of white stork return in Alsace. Going 
+further, the model could be used with up-to-date weather data to forecast the arrival date of the first white 
+stork in Alsace in the future.

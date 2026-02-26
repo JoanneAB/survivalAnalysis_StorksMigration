@@ -1,0 +1,25 @@
+% ---------------------------------------------------------------------------------------------------------------
+\section{Introduction}
+Considered as the symbol of Alsace (South-East region of France), the white stork (figure \ref{fig_cigogne}) 
+returns to Alsace every spring from winter migration in Africa. Every spring, the return of the white stork to 
+Alsace, marks an important events of the season. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1]{figures/cigogne.png}
+\caption{Picture of the white stork (left, \cite{cigogne}), illustration of Hansi "La Cigogne de notre Village est revenue" (right).} 
+\label{fig_cigogne}
+\end{figure}
+
+From a scientific perspective, the timing of migratory returns is known to be influenced by a combination of 
+environmental factors, including temperature, wind conditions, and cloud coverage. Understanding and modelling 
+these factors is of growing importance in the context of climate change as seasonal weather patterns may 
+significantly alter bird migration phenology.
+
+This study applies survival analysis to model the time until the first white stork observation of the year in 
+Alsace, using data collected across the region. Survival times are defined as the number of days from the start of 
+the year until the first stork is observed. Weather data as well as lunar phase information are used as covariates 
+to explain the variability in return dates.
+
+A Cox proportional hazards model is fitted to the data, and the proportional hazards assumption is evaluated and 
+addressed through the introduction of time-varying coefficients. 

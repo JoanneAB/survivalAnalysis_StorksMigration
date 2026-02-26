@@ -1,0 +1,34 @@
+% ---------------------------------------------------------------------------------------------------------------
+\section{Discussion}
+
+% ...............................................................................................................
+\subsection{Time-dependency of the covariates}
+Despite the introduction of time-varying coefficients in the \texttt{Mbest\_tt} model, some temporal variation 
+remains unexplained, particularly for \texttt{isWarm} covariate. The Schoenfeld residuals show sharp and 
+non-linear variations in the effect of \texttt{isWarm} between $\sim80-120$ days that corresponds to the Spring 
+season that is the key season for warm temperatures and migratory returns. \texttt{x/t} transformation is 
+insufficient to fully capture temporal pattern. The binary nature of \texttt{isWarm} covariate may be 
+a limitation and continuous measures of cumulative warm-days might better reflect the mechanisms behind white 
+stork returns.
+
+\texttt{isWarm} covariate captures informations on whether four consecutive warm days with a morning temperature 
+greater than 8\textdegree C did occur before the event. Changing the number of consecutive days or the temperature 
+from 8\textdegree C to 10\textdegree C did not meaningfull improved the model fit. This suggests that the 
+threshold matters less than the overall weather conditions of the seasons. Alternative formulations to describe a 
+warmer-than-usual season should be explored.\\
+
+The stratification variable \texttt{season} did not significantly improve the modeling, suggesting that seasonal 
+variation is already partially captured by the weather covariates.
+
+% ...............................................................................................................
+\subsection{Limitations}
+The dataset used in this study show some limitations and could be extended and refined to better analyse the 
+migratory return dates of the white storks in Alsace. 
+
+The dataset only relies on weather records at two stations (Strasbourg and Mulhouse), which may not fully 
+represent spatial variability across Alsace's sub-regions. Additional records at weather stations distributed 
+across the region would help capture local meteorological variability more accurately.
+
+Missing values represent $\sim$2.6\% of the dataset which may not be negligeable regarding the small amount of 
+data collected. These missing values were replaced with covariate means, which may introduce bias to the dataset.
+

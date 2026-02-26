@@ -1,0 +1,132 @@
+% ---------------------------------------------------------------------------------------------------------------
+\documentclass[paper=a4, fontsize=12pt]{article}
+\usepackage[a4paper, right=25mm, left=25mm, top=30mm, pdftex]{geometry}
+\usepackage[explicit]{titlesec}% http://ctan.org/pkg/titlesec
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{bbold}
+\usepackage{wrapfig}
+\usepackage{pdfpages}
+\usepackage[numbers,sort]{natbib}
+\usepackage{subfig}
+\usepackage{array,multirow}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{here}
+\usepackage{efbox,graphicx}
+\efboxsetup{linecolor=black,linewidth=0.7pt}
+
+% ------------------------------------------------------------------------------
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\definecolor{bleu}{rgb}{0, 0, 0.65}
+\definecolor{gris}{rgb}{0.86, 0.86, 0.86}
+\definecolor{vert}{rgb}{0.0, 0.5, 0.0}
+\newcommand{\red}{\textcolor{red}}
+\newcommand{\blue}{\textcolor{bleu}}
+
+\definecolor{model16}{rgb}{1.00, 0.39, 0.39} % 255/100/100 red
+\definecolor{model17}{rgb}{0.39, 1.00, 0.39} % 100/255/100 green
+\definecolor{model05}{rgb}{0.39, 0.39, 1.00} % 100/100/255 blue
+\definecolor{model08}{rgb}{0.39, 1.00, 1.00} % 100/255/255 cyan
+\definecolor{model19}{rgb}{1.00, 0.39, 1.00} % 255/100/255 purple
+\definecolor{model06}{rgb}{1.00, 0.86, 0.00} % 255/220/0   yellow/orange
+\definecolor{model15}{rgb}{0.78, 0.78, 0.08} % 200/200/20  yellow
+\definecolor{model14}{rgb}{0.70, 0.70, 0.70} % 180/180/180 gray
+\definecolor{model20}{rgb}{0.00, 0.50, 0.00} % 180/180/180 dark green
+
+\newcommand{\colorA}{\textcolor{model16}}
+\newcommand{\colorB}{\textcolor{model17}}
+\newcommand{\colorC}{\textcolor{model05}}
+\newcommand{\colorD}{\textcolor{model08}}
+\newcommand{\colorE}{\textcolor{model19}}
+\newcommand{\colorF}{\textcolor{model06}}
+\newcommand{\colorG}{\textcolor{model15}}
+\newcommand{\colorH}{\textcolor{model14}}
+\newcommand{\colorI}{\textcolor{model20}}
+
+\newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
+
+\bibliographystyle{plainnat}
+
+\makeatletter
+  \def\vhrulefill#1{\leavevmode\leaders\hrule\@height#1\hfill \kern\z@}
+\makeatother
+
+\def\Vhrulefill{\leavevmode\leaders\hrule height 0.8ex depth \dimexpr1.4pt-0.7ex\hfill\kern0pt}
+\titleformat{\section}{\bfseries\Large}{}{-25pt}{\noindent ~ \thesection.\quad#1~~\Vhrulefill}
+\titleformat{\subsection}{\large}{}{-2pt}{\thesubsection.\quad#1~~\textcolor{gris}{\vhrulefill{6pt}}}
+%\titleformat{\section}{\bfseries\Large}{}{-25pt}{\noindent ~ #1~~\Vhrulefill}
+%\titleformat{\subsection}{\large}{}{-2pt}{#1~~\textcolor{gris}{\vhrulefill{6pt}}}
+
+% ------------------------------------------------------------------------------
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=R,                     % the language of the code
+}
+\lstset{style=mystyle}
+
+% ------------------------------------------------------------------------------
+\newcommand{\HRule}[1]{\rule{\linewidth}{#1}} % Horizontal rule
+\makeatletter % Title
+\def\printtitle{{\centering \@title\par}}
+\makeatother
+
+\makeatletter % Author
+\def\printauthor{{\centering \large \@author}}
+\makeatother
+
+% ------------------------------------------------------------------------------
+\title{\normalsize \textsc{} %Title page subtitle}
+\\[2.0cm]\HRule{0.5pt} \\
+\LARGE \textbf{\uppercase{Survival Analysis}}
+\HRule{2pt} \\ [0.5cm]\vspace*{0.2cm}
+\Large{Course project : A survival analysis on migratory return dates of white storks to Alsace, France}
+\normalsize\\\vspace*{1cm} \large{\textit{Datasets, scripts and report are available at: \url{https://github.com/JoanneAB/survivalAnalysis\_StorksMigration}}}}
+
+\author{Joanne ADAM\\Data ScienceTech Institut\\
+\texttt{joanne.adam@edu.dsti.institute}\\}
+
+
+% ------------------------------------------------------------------------------
+\begin{document}
+\thispagestyle{empty} \printtitle 
+\vfill
+\printauthor
+%\vfill
+\newpage
+
+\input{introduction}
+\input{dataCollection}
+\input{survivalAnalysis}
+\input{discussion}
+\input{conclusion}
+
+\section{References}
+\renewcommand{\section}[2]{}%
+\bibliography{biblio}
+\end{document}

@@ -1,0 +1,366 @@
+```{r}
+library(corrplot)
+library(lubridate)
+library(zoo)
+library(tidyverse)
+library(survival)
+library(asaur)
+library(broom)
+library(survminer)
+library(ggfortify)
+library(gtsummary)
+library(ggplot2)
+library(GGally)
+library(ggsurvfit)
+```
+
+## Get the Data
+
+```{r}
+data_orig = read.csv('../../database_1perDay_isWarm8.csv', sep=',', header=T)
+```
+
+## Dataset
+
+```{r}
+cat("--- Dimension of the dataset: ", dim(data_orig), "\n")
+cat("--- Number of missing values: ", sum(is.na(data_orig)), "\n") # sum=0 -> no missing values
+
+head(data_orig)
+tbl_summary(data_orig)
+```
+
+```{r}
+data_clean <- data_orig
+
+# Add a season variable to allow the risk to vary with seasons:
+data_clean$season <- factor(quarters(as.Date(data_orig$stop)))
+
+barplot(prop.table(table(data_clean$season)))
+```
+
+### Try to fix the outliers
+
+The ciconia can fly up to 4 800m high so limit the value of cloudHeight to 3 000
+
+```{r}
+data_clean$cloudHeight[data_clean$cloudHeight>2000] <- 2000
+
+par(mfrow=c(2,2), mai = c(0.6, 0.6, 0.1, 0.1))
+hist(data_orig$cloudHeight, breaks=20)
+hist(data_clean$cloudHeight, breaks=10)
+```
+
+The ciconia has difficulties flying with winds higher than 3-5m/s
+
+```{r}
+data_clean$windSpeed[data_clean$windSpeed>5] <- 5
+
+par(mfrow=c(2,2), mai = c(0.6, 0.6, 0.1, 0.1))
+hist(data_orig$windSpeed)
+hist(data_clean$windSpeed)
+```
+
+Remove data with observation time after day 212 (1 august) as they are usually observed much earlier. They are bad measurements ?
+
+```{r}
+ids <- unique(data_clean$id[data_clean$stop>212])
+
+ids
+
+data_clean <- data_clean[! data_clean$id %in% ids,]
+
+par(mfrow=c(2,2), mai = c(0.6, 0.6, 0.1, 0.1))
+plot(data_orig$stop, data_orig$temperature)
+hist(data_orig$stop, breaks=30)
+
+plot(data_clean$stop, data_clean$temperature)
+hist(data_clean$stop, breaks=30)
+```
+
+## Normalization of the dataset
+
+```{r}
+# Normalize the non-boolean data for all attributes to have mean=0 and std=1.
+# with or without normalizing binary data does not affect the result !!
+data <- data_clean
+
+data[c(6:15)] <- lapply(data[c(6:15)], function(x) c(scale(x)))
+```
+
+## Replace missing values
+
+```{r}
+data[is.na(data)] <- 0
+
+summary(data)
+head(data)
+```
+# Remove Outliers
+
+```{r}
+## See linear variation of temperature and time:
+plot(data$stop, data$temperature, lwd=2)
+
+plot(data$stop, data$temperature/data$stop)
+abline(h=0.05, lty=2)
+abline(h=-0.2, lty=2)
+
+# remove outliers:
+data <- data[data$temperature/data$stop <= 0.05,]
+data <- data[data$temperature/data$stop >= -0.2,]
+```
+
+## Some plots
+
+```{r}
+old.par = par(mar = c(6, 5, 2, 2))
+par(mfrow=c(3,2), mai = c(0.6, 0.6, 0.1, 0.1))
+plot(data$stop, data$temperature, lwd=2, xlab="Days to event", ylab="Temperature [°C]")
+boxplot(data$temperature, ylab="Temperature [°C]")
+
+plot(data$stop, data$windSpeed  , lwd=2, xlab="Days to event", ylab="Wind Speed  [m/s]")
+boxplot(data$windSpeed, ylab="Wind Speed [m/s]")
+
+plot(data$stop, data$pressure   , lwd=2, xlab="Days to event", ylab="Pressure [Pa]")
+boxplot(data$pressure, ylab="Pressure [Pa]")
+
+par(mfrow=c(3,2), mai = c(0.6, 0.6, 0.1, 0.1))
+plot(data$stop, data$humidity   , lwd=2, xlab="Days to event", ylab="Humidity [%]")
+boxplot(data$humidity, ylab="Humidity [%]")
+
+plot(data$stop, data$visibility   , lwd=2, xlab="Days to event", ylab="Visibility [%]")
+boxplot(data$visibility, ylab="Visibility [%]")
+
+plot(data$stop, data$nebulosity   , lwd=2, xlab="Days to event", ylab="Nebulosiity [%]")
+boxplot(data$nebulosity, ylab="Nebulosity [%]")
+
+par(mfrow=c(3,2), mai = c(0.6, 0.6, 0.1, 0.1))
+plot(data$stop, data$cloudHeight   , lwd=2, xlab="Days to event", ylab="Cloud Height [m]")
+boxplot(data$cloudHeight, ylab="Cloud Height [m]")
+
+plot(data$stop, data$moonPhase   , lwd=2, xlab="Days to event", ylab="Moon Phase [%]")
+boxplot(data$moonPhase, ylab="Moon Phase [%]")
+
+hist(data$isWarm)
+hist(data$event)
+```
+
+```{r}
+ggplot(stack(data[, !names(data) %in% c("stop", "start", "id", "event", "season", "isWarm")]), aes(x=ind, y=values)) + geom_boxplot() + coord_flip()
+```
+
+```{r}
+old.par = par(mar = c(6, 5, 2, 2))
+par(mfrow=c(3,3), mai = c(0.6, 0.6, 0.1, 0.1))
+plot(data$stop, data$temperature, lwd=2, xlab="Days to event", ylab="Temperature [°C]")
+plot(data$stop, data$windSpeed  , lwd=2, xlab="Days to event", ylab="Wind Speed  [m/s]")
+plot(data$stop, data$pressure   , lwd=2, xlab="Days to event", ylab="Pressure [Pa]")
+plot(data$stop, data$humidity   , lwd=2, xlab="Days to event", ylab="Humidity [%]")
+plot(data$stop, data$visibility   , lwd=2, xlab="Days to event", ylab="Visibility [%]")
+plot(data$stop, data$nebulosity   , lwd=2, xlab="Days to event", ylab="Nebulosiity [%]")
+plot(data$stop, data$cloudHeight   , lwd=2, xlab="Days to event", ylab="Cloud Height [m]")
+plot(data$stop, data$moonPhase   , lwd=2, xlab="Days to event", ylab="Moon Phase [%]")
+```
+
+
+
+## Correlation matrix
+
+```{r}
+par(mfrow=c(1,1))
+corrplot(cor(data[1:15]), tl.col="black", main="Correlation Matrix")
+```
+
+# SURVIVAL ANALYSIS
+
+## COX
+
+```{r}
+Mnone  <- coxph(Surv(start, stop, event)~1          , data=data)
+Mtemp  <- coxph(Surv(start, stop, event)~temperature, data=data)
+Mwarm  <- coxph(Surv(start, stop, event)~isWarm     , data=data)
+Mwind  <- coxph(Surv(start, stop, event)~windSpeed  , data=data)
+Mcloud <- coxph(Surv(start, stop, event)~cloudHeight, data=data)
+
+cat("--- Mtemp ---\n\n")
+summary(Mtemp)
+# p-value < 0.01 --> reject H0. Difference between Mnone and Mtemp is higly significant -> should keep temperature
+
+cat("--- Mwarm ---\n\n")
+summary(Mwarm)
+# p-value  < 0.01 --> reject H0. Difference between Mnone and Mwarm is highly significant -> should keep isWarm
+
+cat("--- Mwind ---\n\n")
+summary(Mwind)
+# p-value < 0.05 --> reject H0. Difference between Mnone and Mwind is significant -> should keep windSpeed
+
+cat("--- Mcloud ---\n\n")
+summary(Mcloud)
+# p-value < 0.05 --> reject H0. Difference between Mnone and Mcloud is significant -> should keep cloudHeight
+
+```
+
+# Comparing nested models
+
+## ANOVA
+
+```{r}
+# Regarding the correlation Matrix, Temperature, warmBefore are the most significant covariates
+MtempWarm <- coxph(Surv(start, stop, event)~temperature + isWarm + strata(season)       , data=data)
+MtempWarmWindCloud <- coxph(Surv(start, stop, event)~temperature + isWarm + strata(season) + windSpeed + cloudHeight       , data=data)
+Mall      <- coxph(Surv(start, stop, event)~latitude + longitude + isWarm + temperature + windSpeed + pressure + humidity + visibility + nebulosity + cloudHeight + moonPhase + strata(season), data=data)
+
+anova(MtempWarm, Mall)
+# p-value < 0.05 --> reject H0. Difference between the models is highly significant -> should keep more covariates than just Temperature and isWarm
+
+anova(MtempWarmWindCloud, Mall)
+# p-value = 0.01257, < 0.05 --> reject H0. Difference between the models is significant -> more covariates are necessary to explain the data
+```
+
+```{r}
+# Model selection using all covariates:
+MAIC <- step(Mall)
+summary(MAIC)
+
+# MoonPhase, nebulosity, pressure and latitude : not necessary at all
+# 11 degrees of freedom
+```
+
+```{r}
+Mbest <- coxph(Surv(start, stop, event)~longitude + latitude + pressure + temperature + isWarm + windSpeed + humidity + visibility + cloudHeight + strata(season), data=data)
+summary(Mbest)
+tab1 <- tidy(Mbest, exponentiate=T, conf.int=T) # conf.int : confident interval
+# p-values are < 0.05 so we accept these covariates, there are statistically significant
+tab1
+
+Mbest %>% survfit2() %>% ggsurvfit() + add_confidence_interval() + add_risktable() + scale_y_continuous(limits = c(0, 1))
+```
+
+```{r}
+anova(Mall, Mbest)
+# p>0.05 -> reject H1, both models are significantly equals -> keep only the covariates from Mbest is sufficient.
+```
+```{r}
+# Without strata(season)
+Mall_noSeason  <- coxph(Surv(start, stop, event)~longitude + latitude + pressure + temperature + isWarm + windSpeed + humidity + visibility + cloudHeight + nebulosity + moonPhase, data=data)
+Mbest_noSeason <- coxph(Surv(start, stop, event)~longitude  + pressure + temperature + isWarm + windSpeed + humidity + visibility + cloudHeight , data=data)
+
+anova(Mall_noSeason, Mbest_noSeason)
+# p-value is even higher than when considering strata(season)... -> do not take strata(season)
+
+Mbest_noSeason %>% survfit2() %>% ggsurvfit() + add_confidence_interval() + add_risktable() + scale_y_continuous(limits = c(0, 1)) 
+```
+
+## Look at Hazard Ratio (HR)
+
+```{r}
+ggforest(Mall_noSeason , main="Hazard ratios and 95% confidence intervals", data=data) # FIXME Not working with strata(season)
+ggforest(Mbest_noSeason, main="Hazard ratios and 95% confidence intervals", data=data) # FIXME Not working with strata(season)
+# Confidence intervals are relatively small -> good !
+# line is for HR=1 ; 
+# HR of isWarm is only <0.1 -> less than 10% of the hazard
+
+ggcoef_model(Mbest_noSeason, exponentiate=TRUE)
+ggcoef_model(Mall_noSeason , exponentiate=TRUE)
+```
+
+## Time-dependency risks - Schoenfeld test
+
+```{r}
+# Try to identify the covariates with time-varying effects
+# test : H0 = HR for the covariate is constant over time 
+cox.zph(Mbest)
+
+par(mfrow=c(3,3), mai = c(0.6, 0.6, 0.1, 0.1))
+plot(cox.zph(Mbest))
+
+# p-values are all < 0.05 --> reject H0 -> time variations
+
+cox.zph(Mbest_noSeason)
+plot(cox.zph(Mbest_noSeason))
+```
+
+
+```{r}
+# Looking at data, temperature seems to be linear dependent with time, try:
+Mbest <- coxph(Surv(start, stop, event)~longitude + latitude + pressure + temperature + isWarm + windSpeed + humidity + visibility + cloudHeight + strata(season), data=data)
+
+Mbest_tt1 <- coxph(Surv(start, stop, event)~longitude + tt(longitude) + latitude + tt(latitude) + pressure + tt(pressure) + temperature + tt(temperature) + isWarm + tt(isWarm) + windSpeed + tt(windSpeed) + humidity + tt(humidity) + visibility + cloudHeight + strata(season), data=data, tt=function(x,t,...) x/t)
+Mbest_tt2 <- coxph(Surv(start, stop, event)~longitude + tt(longitude) + latitude + tt(latitude) + pressure + tt(pressure) + temperature + tt(temperature) + isWarm + tt(isWarm) + windSpeed + tt(windSpeed) + humidity + tt(humidity) + visibility + cloudHeight + strata(season) , data=data, tt=function(x,t,...) x*t)
+Mbest_tt3 <- coxph(Surv(start, stop, event)~longitude + tt(longitude) + latitude + tt(latitude) + pressure + tt(pressure) + temperature + tt(temperature) + isWarm + tt(isWarm) + windSpeed + tt(windSpeed) + humidity + tt(humidity) + visibility + cloudHeight + strata(season), data=data, tt=function(x,t,...) x*log(t))
+
+anova(Mbest_tt1, Mbest_tt2) # p-value < 0.01 -> highly significant difference between the two models
+anova(Mbest_tt1, Mbest_tt3) # p-value < 0.01 -> highly significant difference between the two models
+anova(Mbest_tt2, Mbest_tt3) # p-value < 0.01 -> highly significant difference between the two models
+
+# Termplot figures for model tt1 show slower values -> take this one as favorite. 
+```
+
+```{r}
+termplot(Mbest_tt1, se=TRUE)
+```
+
+```{r}
+termplot(Mbest_tt2, se=TRUE)
+```
+
+```{r}
+termplot(Mbest_tt3, se=TRUE)
+```
+
+
+## Residuals of selected models
+
+```{r}
+residuals_best <- residuals(Mbest    , type="martingale")
+residuals_tt1  <- residuals(Mbest_tt1, type="martingale")
+residuals_tt2  <- residuals(Mbest_tt2, type="martingale")
+residuals_tt3  <- residuals(Mbest_tt3, type="martingale")
+```
+
+```{r}
+par(mfrow = c(1, 4), mar = c(4, 4, 3, 1))
+
+plot(residuals_best, ylim=c(-6,1), main="BEST")
+plot(residuals_tt1 , ylim=c(-6,1), main="TT1")
+plot(residuals_tt2 , ylim=c(-6,1), main="TT2")
+plot(residuals_tt3 , ylim=c(-6,1), main="TT3")
+# Results are similare for differents time-dependent function...
+
+par(mfrow = c(1,1), mar = c(3, 4, 3, 1))
+# residuals for NONE is far from 0 (=1) while BEST and ALL is closer to 0.
+# Many outliers -> try to identify them
+
+boxplot(residuals_best, residuals_tt1, names=c("BEST", "TT1"))
+
+boxplot(residuals_tt1, residuals_tt2, residuals_tt3, names=c("TT1", "TT2", "TT3"))
+```
+```{r}
+par(mfrow = c(2,3), mar = c(3, 4, 3, 1))
+
+hist(residuals_best, xlim=c(-4, 1), breaks=20, main="Best model")
+hist(residuals_tt1 , xlim=c(-4, 1), breaks=6, main="Time-varying best model")
+boxplot(residuals_best, residuals_tt1, names=c("Best", "Time-varying"))
+```
+
+```{r}
+predict_best <- predict(Mbest   , type="lp")
+predict_tt   <- predict(Mbest_tt1, type = "lp")
+
+par(mfrow = c(1, 2), mar = c(4, 4, 3, 1))
+
+plot(predict_best, residuals_best, ylim=c(-2,1), xlab="Linear predictor", ylab="Martingale residuals", main="Best model")
+lines(lowess(predict_best, residuals_best), col="red", lwd=2)
+abline(h=0, lty=2)
+
+plot(predict_tt  , residuals_tt1 , ylim=c(-2,1), xlab="Linear predictor", ylab="Martingale residuals", main="Time-varying best model")
+lines(lowess(predict_tt, residuals_tt1), col="red", lwd=2)
+abline(h=0, lty=2)
+
+# Residuals close to +1 indicate subjects who experienced the event but the model predicted a very low hazard (possibly early events or unusual cases).
+# This could happen if the model underfits or the time-dependent term hasn't fully captured hazard variation.
+# - Residuals near +1 = events with underestimated risk by the model.
+# - Residuals near 0 = well-predicted outcomes.
+# - Residuals near -1 = censored observations with large predicted hazard (over-predicted risk).
+```
